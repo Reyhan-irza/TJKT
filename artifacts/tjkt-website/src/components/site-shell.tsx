@@ -44,40 +44,34 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     let lenis: Lenis | null = null;
     let refreshFrame = 0;
+    let setMarqueeSkew: (value: number) => void = () => undefined;
     const onTick = (time: number) => {
       lenis?.raf(time * 1000);
     };
     const onLenisScroll = (instance: Lenis) => {
       ScrollTrigger.update();
       const velocity = Math.max(-1.8, Math.min(1.8, instance.velocity / 35));
-      gsap.to('.running-track', {
-        skewX: velocity,
-        duration: 0.28,
-        ease: 'power2.out',
-        overwrite: true,
-      });
+      setMarqueeSkew(velocity);
     };
-    if (!reduceMotion && !isMobile) {
-      lenis = new Lenis({
-        autoRaf: false,
-        duration: 1.05,
-        smoothWheel: true,
-        syncTouch: false,
-        wheelMultiplier: 0.9,
-      });
-      lenis.on('scroll', onLenisScroll);
-      gsap.ticker.add(onTick);
-      gsap.ticker.lagSmoothing(1000, 16);
-    }
     document.documentElement.classList.add('is-ready');
     const media = gsap.matchMedia();
+    const images = Array.from(document.images).filter((image) => !image.complete);
+    const refresh = () => ScrollTrigger.refresh();
     const updateMarqueeDirection = (self: { direction: number }) => {
-      root.dataset.scrollDirection = self.direction === -1 ? 'up' : 'down';
-      document.querySelectorAll<HTMLElement>('.running-band').forEach((band) => {
+      const direction = self.direction === -1 ? 'up' : 'down';
+      root.dataset.scrollDirection = direction;
+      runningBands.forEach((band) => {
         band.dataset.direction = self.direction === -1 ? 'reverse' : 'forward';
       });
     };
+    const runningBands = gsap.utils.toArray<HTMLElement>('.running-band');
     const context = gsap.context(() => {
+      const runningTracks = gsap.utils.toArray<HTMLElement>('.running-track');
+      const updateSkew = runningTracks.map((track) => gsap.quickTo(track, 'skewX', {
+        duration: 0.28,
+        ease: 'power2.out',
+      }));
+      setMarqueeSkew = (value) => updateSkew.forEach((update) => update(value));
       ScrollTrigger.create({ trigger: document.documentElement, start: 0, end: 'max', onUpdate: updateMarqueeDirection });
       const header = document.querySelector<HTMLElement>('.site-header');
       if (header && !reduceMotion) {
@@ -221,6 +215,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
           const words = gsap.utils.toArray<HTMLElement>('.story-word');
           const storyProgress = story.querySelector<HTMLElement>('.story-progress-line span');
           const storyNumber = story.querySelector<HTMLElement>('.story-progress-number');
+          if (!words.length) return;
           const storyTimeline = gsap.timeline({
             scrollTrigger: {
               trigger: story,
@@ -260,8 +255,22 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         });
       });
     });
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    refreshFrame = requestAnimationFrame(() => ScrollTrigger.refresh());
+    if (!reduceMotion && !isMobile) {
+      lenis = new Lenis({
+        autoRaf: false,
+        duration: 1.05,
+        smoothWheel: true,
+        syncTouch: false,
+        wheelMultiplier: 0.9,
+      });
+      lenis.on('scroll', onLenisScroll);
+      gsap.ticker.add(onTick);
+      gsap.ticker.lagSmoothing(1000, 16);
+    }
+    window.scrollTo(0, 0);
+    images.forEach((image) => image.addEventListener('load', refresh, { once: true }));
+    window.addEventListener('load', refresh, { once: true });
+    refreshFrame = requestAnimationFrame(refresh);
     return () => {
       context.revert();
       media.revert();
@@ -270,8 +279,10 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         lenis.destroy();
         gsap.ticker.remove(onTick);
       }
+      setMarqueeSkew = () => undefined;
+      images.forEach((image) => image.removeEventListener('load', refresh));
+      window.removeEventListener('load', refresh);
       cancelAnimationFrame(refreshFrame);
-      gsap.killTweensOf('.running-track');
       root.style.removeProperty('--scroll-progress');
       delete root.dataset.scrollDirection;
     };
