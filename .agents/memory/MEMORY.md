@@ -1,0 +1,1 @@
+- [GitHub repository sync](github-sync.md) — merge independent remote starter commits before pushing; never overwrite remote history with a force-push by default.
