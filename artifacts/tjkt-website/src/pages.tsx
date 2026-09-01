@@ -16,7 +16,7 @@ export function HomePage() {
     <section className="hero">
       <div className="hero-lines" />
       <div className="container hero-grid">
-        <div className="hero-copy"><div className="hero-kicker"><SectionLabel dark>Program keahlian / TJKT</SectionLabel></div><h1><span className="hero-line-mask"><span className="hero-line">Menghubungkan</span></span><span className="hero-line-mask"><span className="hero-line"><em>teknologi,</em></span></span><span className="hero-line-mask"><span className="hero-line">menggerakkan</span></span><span className="hero-line-mask"><span className="hero-line">masa depan.</span></span></h1><p className="hero-sub">Tempat mengenal jaringan komputer, infrastruktur, dan telekomunikasi melalui cara berpikir teknis dan praktik yang nyata.</p><div className="hero-actions"><Link href="/pembelajaran" className="button-primary" data-testid="link-hero-explore">Jelajahi TJKT <ArrowRight size={15} /></Link><Link href="/tentang" className="button-secondary" data-testid="link-hero-about">Tentang TJKT</Link></div></div>
+        <div className="hero-copy"><div className="hero-kicker"><SectionLabel dark>Program keahlian / TJKT</SectionLabel></div><h1><span className="hero-line-mask"><span className="hero-line">Menghubungkan</span></span><span className="hero-line-mask"><span className="hero-line"><em>teknologi,</em></span></span><span className="hero-line-mask"><span className="hero-line">menggerakkan</span></span><span className="hero-line-mask"><span className="hero-line">masa depan.</span></span></h1><p className="hero-sub">Tempat mengenal jaringan komputer, infrastruktur, dan telekomunikasi melalui cara berpikir teknis dan praktik yang nyata.</p><div className="hero-actions"><Link href="/pembelajaran" className="button-primary" data-testid="link-hero-explore">Jelajahi TJKT <ArrowRight size={15} /></Link><Link href="/tentang" className="button-secondary" data-testid="link-hero-about">Tentang TJKT</Link></div><div className="hero-data" aria-label="Ringkasan program"><div><strong>04</strong><span>fondasi bidang</span></div><div><strong>06</strong><span>ruang praktik</span></div><div><strong>01</strong><span>rasa ingin tahu</span></div></div></div>
           <div className="hero-visual">
            <figure className="hero-image-frame">
              <img src="/images/home-hero.jpg" alt="Ilustrasi perangkat jaringan dan proses pemecahan masalah telekomunikasi" data-parallax />
@@ -24,10 +24,11 @@ export function HomePage() {
            </figure>
            <div className="hero-note"><strong>SMKN 2 LUBUK BASUNG</strong>Teknik Jaringan Komputer dan Telekomunikasi. Informasi untuk siswa dan orang tua yang ingin mengenal lebih dekat.</div>
          </div>
-      </div>
-        <a className="scroll-cue" href="#kompetensi" data-testid="link-scroll-competencies"><span /> gulir untuk menjelajah</a>
+        </div>
+         <a className="scroll-cue" href="#kompetensi" data-testid="link-scroll-competencies"><span /> gulir untuk menjelajah</a>
     </section>
      <RunningBand />
+      <StatementStrip />
      <section id="kompetensi" className="competency-band" aria-labelledby="competency-title"><h2 id="competency-title" className="sr-only">Kompetensi TJKT</h2><div className="container competency-grid">{competencies.map(({ number, title, description, icon: Icon }, index) => <button className={`competency ${selectedCompetency === index ? 'selected' : ''}`} key={number} onClick={() => setSelectedCompetency(index)} aria-pressed={selectedCompetency === index} data-testid={`button-competency-${number}`} data-reveal><span className="competency-number">{number}</span><div className="competency-icon"><Icon size={23} strokeWidth={1.5} /></div><h3>{title}</h3><p>{description}</p><span className="competency-indicator" aria-hidden="true" /></button>)}</div></section>
      <StorySection />
     <section className="section-tight"><div className="container asymmetry"><div className="blueprint" data-reveal><span className="blueprint-coord a">00° 12' 45"S</span><span className="blueprint-coord b">LAB / FIELD NOTE 01</span><span className="blueprint-mark">TJ<span>KT</span></span></div><div data-reveal><SectionLabel>Belajar secara menyeluruh</SectionLabel><h2 className="display" style={{ fontSize: 'clamp(2.5rem, 4.7vw, 5.3rem)', lineHeight: '.9', letterSpacing: '-.07em', margin: '18px 0 25px' }}>Dari kabel,<br /><span style={{ color: 'var(--blue)' }}>ke koneksi.</span></h2><p className="body-copy">Bidang ini mengajak siswa melihat teknologi dari fondasinya. Bukan sekadar memakai perangkat, tetapi memahami hubungan, alur, dan keputusan di balik sebuah sistem.</p><ArrowLink href="/pembelajaran">Lihat area pembelajaran</ArrowLink></div></div></section>
@@ -87,8 +88,8 @@ export function FacilitiesPage() {
    </>;
 }
 
-export function ContactPage() {
-  return <><Seo title="Prospek & Kontak | TJKT SMKN 2 Lubuk Basung" description="Informasi prospek bidang TJKT dan kontak SMKN 2 Lubuk Basung." /><PageHero eyebrow="04 / Prospek & kontak" title={<>Where can<br /><em>TJKT take you?</em></>} aside="Kenali contoh arah pengembangan bidang, lalu hubungi SMKN 2 Lubuk Basung melalui kanal yang tersedia." />
+ export function ContactPage() {
+  return <><Seo title="Prospek & Kontak | TJKT SMKN 2 Lubuk Basung" description="Informasi prospek bidang TJKT dan kontak SMKN 2 Lubuk Basung." /><PageHero eyebrow="04 / Prospek & kontak" title={<>Setelah TJKT,<br /><em>ke mana?</em></>} aside="Kenali contoh arah pengembangan bidang, lalu hubungi SMKN 2 Lubuk Basung melalui kanal yang tersedia." />
     <section className="section prospect-band"><div className="container"><SectionLabel>Eksplorasi karier</SectionLabel><h2>Bidang teknis<br />terus <span style={{ color: 'var(--blue)' }}>berkembang.</span></h2><div className="prospect-grid">{careers.slice(0, 3).map((career, index) => <article className="prospect-card" key={career.title} data-reveal><span className="mono">0{index + 1} / CONTOH ARAH</span><h3>{career.title}</h3><p>{career.description}</p></article>)}</div></div></section>
      <ContactSection />
     <section className="container section-tight"><div className="cta-panel" data-reveal><h2>Teknologi dimulai<br /><span>dengan pertanyaan.</span></h2><a href={`mailto:${site.email}`} className="button-primary" data-testid="link-contact-email-cta">Kirim email <ArrowRight size={15} /></a></div></section>
@@ -132,6 +133,16 @@ function RunningBand() {
     <div className="running-track">
       {items.map((item) => <span className="running-item" key={`primary-${item.label}`}>{item.logo && <img src={item.logo} alt="" aria-hidden="true" />}<strong>{item.label}</strong></span>)}
       {items.map((item) => <span className="running-item" aria-hidden="true" key={`duplicate-${item.label}`}>{item.logo && <img src={item.logo} alt="" />}<strong>{item.label}</strong></span>)}
+    </div>
+  </section>;
+}
+
+function StatementStrip() {
+  return <section className="statement-strip" aria-label="Catatan singkat tentang TJKT">
+    <div className="container statement-layout">
+      <span className="statement-index">FIELD NOTE / 001</span>
+      <p>Teknologi terasa dekat saat kita memahami hubungan yang membuatnya bekerja.</p>
+      <span className="statement-arrow" aria-hidden="true"><ArrowDownRight size={19} /></span>
     </div>
   </section>;
 }
@@ -186,5 +197,5 @@ function EcosystemBand() {
 }
 
 function PageHero({ eyebrow, title, aside }: { eyebrow: string; title: ReactNode; aside: string }) {
-  return <section className="page-hero"><div className="container page-hero-grid"><div data-reveal><SectionLabel dark>{eyebrow}</SectionLabel><h1>{title}</h1></div><p className="page-hero-side" data-reveal>{aside}</p></div></section>;
+  return <section className="page-hero"><span className="page-hero-coordinate page-hero-coordinate-top">SMKN2 / TJKT / 2026</span><span className="page-hero-coordinate page-hero-coordinate-bottom">FIELD NOTE / OPEN DAY</span><div className="container page-hero-grid"><div data-reveal><SectionLabel dark>{eyebrow}</SectionLabel><h1>{title}</h1></div><p className="page-hero-side" data-reveal>{aside}</p></div></section>;
 }
