@@ -1,3 +1,14 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+  <title>TJKT SMKN 2 Lubuk Basung</title>
+  <rect width="180" height="180" rx="38" fill="#132B50"/>
+  <path d="M18 58H162M18 91H162M18 124H162M57 18V162M90 18V162M123 18V162" stroke="#FFFFFF" stroke-opacity=".08" stroke-width="2"/>
+  <path d="M90 19L151 36L143 94C137 126 116 149 90 162C64 149 43 126 37 94L29 36L90 19Z" fill="#1467B3" stroke="#F2C84B" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M33 37L90 22L147 37L144 54H36L33 37Z" fill="#0B1F3B"/>
+  <text x="90" y="47" fill="#F9F7F0" font-family="Arial, sans-serif" font-size="17" font-weight="800" letter-spacing="2" text-anchor="middle">TJKT</text>
+  <circle cx="90" cy="79" r="8" fill="#F9F7F0"/>
+  <path d="M90 87V127M80 127H100M84 127L90 108L96 127" stroke="#F9F7F0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M73 70C66 75 66 84 73 89M107 70C114 75 114 84 107 89M63 63C51 72 51 87 63 96M117 63C129 72 129 87 117 96" stroke="#F9F7F0" stroke-width="4" stroke-linecap="round"/>
+  <path d="M90 105L69 125M90 105L111 125M69 125H111" stroke="#F2C84B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="69" cy="125" r="5" fill="#F2C84B"/>
+  <circle cx="111" cy="125" r="5" fill="#F2C84B"/>
 </svg>
