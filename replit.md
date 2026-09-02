@@ -4,26 +4,26 @@ Website presentasi program keahlian Teknik Jaringan Komputer dan Telekomunikasi 
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
+- `pnpm dev` — run the TJKT website preview
+- `pnpm run typecheck` — typecheck the website
+- `pnpm run build` — build the static website
 - `pnpm --filter @workspace/tjkt-website run dev` — run the TJKT website preview
 - `pnpm --filter @workspace/tjkt-website run build` — build the static Vercel-ready website
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- pnpm workspace, Node.js 24, TypeScript 5.9
+- React 19 + TypeScript
+- Vite 7
+- GSAP + ScrollTrigger
+- Lenis desktop smooth scrolling
+- Wouter client-side routing
+- Vercel static deployment
 
 ## Where things live
 
+- Root Vercel configuration: `vercel.json`
+- Root developer instructions: `README.md`
 - Website entry and routes: `artifacts/tjkt-website/src/App.tsx`
 - Page content and interactions: `artifacts/tjkt-website/src/pages.tsx`
 - Shared shell and GSAP/Lenis lifecycle: `artifacts/tjkt-website/src/components/site-shell.tsx`
@@ -56,4 +56,4 @@ The site introduces TJKT through an editorial landing page, explains the program
 
 ## Pointers
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- See `README.md` for the Visual Studio Code setup and Vercel deployment tutorial.

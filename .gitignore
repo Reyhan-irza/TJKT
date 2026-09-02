@@ -47,3 +47,12 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Local-only agent, conversation, upload, and non-website workspace files
+.agents/
+.conversation/
+attached_assets/
+artifacts/api-server/
+artifacts/mockup-sandbox/
+lib/
+scripts/
