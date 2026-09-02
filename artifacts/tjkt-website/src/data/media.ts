@@ -1,6 +1,7 @@
 export const media = {
   heroBackground: '/images/home-background.jpg',
   heroIllustration: '/images/home-hero.jpg',
+  videoThumbnail: '/images/video-thumbnail.jpg',
   logo: '/images/tjkt-logo.png',
   labs: [
     { src: '/images/labs/simulator-komputer.webp', fallback: '/images/home-hero.jpg', title: 'Simulator Komputer', note: 'Komponen PC & troubleshooting' },
@@ -15,5 +16,6 @@ export const media = {
     { src: '/images/labs/panel-jaringan.webp', fallback: '/images/home-hero.jpg', title: 'Konfigurasi Perangkat', note: 'Panel dan konektivitas', size: 'wide' },
     { src: '/images/labs/simulator-komputer.webp', fallback: '/images/home-background.jpg', title: 'Troubleshooting', note: 'Simulator komponen PC', size: 'small' },
     { src: '/images/labs/laboratorium-komputer-02.webp', fallback: '/images/home-hero.jpg', title: 'Pembelajaran Laboratorium', note: 'Suasana ruang praktik', size: 'small' },
+    { src: '/images/labs/kegiatan-praktik.webp', fallback: '/images/home-background.jpg', title: 'Kegiatan Praktik', note: 'Kolaborasi siswa di laboratorium', size: 'wide' },
   ],
 } as const;

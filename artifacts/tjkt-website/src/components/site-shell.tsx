@@ -5,6 +5,7 @@ import Lenis from '@/lib/lenis';
 import { gsap } from '@/lib/gsap';
 import { ScrollTrigger } from '@/lib/gsap';
 import { navItems, site } from '@/data/site';
+import { media } from '@/data/media';
 import { createPortal } from 'react-dom';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -443,5 +444,5 @@ export function ArrowLink({ href, children, external = false }: { href: string; 
 }
 
 export function VideoPreview() {
-  return <a className="video-frame" href={site.youtubeUrl} target="_blank" rel="noreferrer" aria-label="Buka video TJKT di YouTube" data-testid="link-video-youtube"><img className="video-still" src="/images/home-hero.jpg" alt="" aria-hidden="true" /><span className="play-button"><Play size={24} fill="currentColor" /></span></a>;
+  return <a className="video-frame" href={site.youtubeUrl} target="_blank" rel="noreferrer" aria-label="Buka video TJKT di YouTube" data-testid="link-video-youtube"><img className="video-still" src={media.videoThumbnail} alt="Thumbnail video kegiatan TJKT" width="1280" height="720" loading="lazy" decoding="async" /><span className="play-button"><Play size={24} fill="currentColor" /></span></a>;
 }

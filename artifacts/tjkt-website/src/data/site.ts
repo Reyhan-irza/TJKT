@@ -10,6 +10,7 @@ export const site = {
   instagram: '@smkn2lubukbasungofficial',
   instagramUrl: 'https://www.instagram.com/smkn2lubukbasungofficial/',
   youtubeUrl: 'https://youtu.be/WJc7Cvf1mWI?si=eLiep-YSxbMSlXjk',
+  mapUrl: 'https://maps.app.goo.gl/wFKvSwX7TFeUvdkU7',
   address: 'Jl. Lintas Manggopoh Pasaman, Lubuk Basung, Sumatera Barat',
 };
 
