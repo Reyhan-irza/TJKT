@@ -1,5 +1,5 @@
 import { ArrowDownRight, ArrowRight, ExternalLink, MapPin, Phone, Mail, Instagram, Youtube, X, Maximize2 } from 'lucide-react';
-import { useEffect, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { Link } from 'wouter';
 import { activities, careers, competencies, learningAreas, practiceAreas, site } from '@/data/site';
 import { media } from '@/data/media';
@@ -62,18 +62,27 @@ export function LearningPage() {
 export function FacilitiesPage() {
   const [activeActivity, setActiveActivity] = useState(activities[0]);
   const [selectedMedia, setSelectedMedia] = useState<MediaItem | null>(null);
+  const mediaCloseRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!selectedMedia) return;
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setSelectedMedia(null);
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        mediaCloseRef.current?.focus();
+      }
     };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeyDown);
+    requestAnimationFrame(() => mediaCloseRef.current?.focus());
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
+      previousFocusRef.current?.focus();
     };
   }, [selectedMedia]);
 
@@ -84,7 +93,7 @@ export function FacilitiesPage() {
      <section className="section-tight" style={{ background: 'var(--mist)' }}><div className="container"><SectionLabel>Kegiatan yang dapat dieksplorasi</SectionLabel><div className="activity-bar" style={{ marginTop: 28 }}>{activities.map((activity) => <button type="button" className={activeActivity === activity ? 'active' : ''} key={activity} onClick={() => setActiveActivity(activity)} aria-pressed={activeActivity === activity} data-testid={`button-activity-${activity.toLowerCase().replaceAll(' ', '-')}`}>{activity}</button>)}</div><div style={{ padding: '47px 0 0', maxWidth: 650 }} data-reveal><span className="mono" style={{ color: 'var(--blue)', fontSize: 11 }}>AKTIVITAS TERPILIH / {activeActivity.toUpperCase()}</span><h2 className="display" style={{ fontSize: 'clamp(2.3rem, 4.4vw, 4.8rem)', letterSpacing: '-.07em', lineHeight: .9, margin: '17px 0' }}>{activeActivity === 'Semua aktivitas' ? 'Belajar dengan ruang untuk bereksperimen.' : `${activeActivity}.`}</h2><p className="body-copy">Contoh kegiatan yang relevan dengan proses belajar TJKT. Foto di galeri menampilkan suasana ruang, perangkat, dan kolaborasi siswa.</p></div></div></section>
      <section className="section"><div className="container"><div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 25, flexWrap: 'wrap' }} data-reveal><div><SectionLabel>Galeri kegiatan</SectionLabel><h2 className="display" style={{ fontSize: 'clamp(2.7rem, 5vw, 5.3rem)', lineHeight: .9, letterSpacing: '-.08em', margin: '18px 0 0' }}>Ruang belajar<br /><span style={{ color: 'var(--blue)' }}>yang nyata.</span></h2></div><p className="body-copy" style={{ maxWidth: 260 }}>Dokumentasi kegiatan dan fasilitas TJKT dari SMKN 2 Lubuk Basung.</p></div><div className="lab-grid gallery-grid" style={{ marginTop: 48 }}>{media.gallery.map((item, index) => <button type="button" className={`lab-slot lab-button gallery-slot ${item.size}`} style={{ '--lab-image': `url(${item.fallback})` } as CSSProperties} key={item.src} data-reveal onClick={() => openMedia(item)} aria-label={`Perbesar dokumentasi ${item.title}`} data-testid={`button-gallery-${index + 1}`}><img className="slot-image" src={item.src} alt={`Dokumentasi ${item.title} TJKT`} loading="lazy" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = item.fallback; }} /><span className="lab-meta">GALLERY / 0{index + 1}</span><span className="lab-expand" aria-hidden="true"><Maximize2 size={14} /></span><span className="lab-title">{item.title}</span><small>{item.note}</small></button>)}</div></div></section>
     <section className="container section-tight"><div className="cta-panel" data-reveal><h2>Lihat bagaimana<br /><span>TJKT terhubung.</span></h2><Link href="/kontak" className="button-primary" data-testid="link-facilities-cta">Prospek & kontak <ArrowRight size={15} /></Link></div></section>
-     {selectedMedia && <div className="media-lightbox" role="dialog" aria-modal="true" aria-labelledby="media-lightbox-title" onClick={() => setSelectedMedia(null)}><div className="media-lightbox-card" onClick={(event) => event.stopPropagation()}><button type="button" className="media-lightbox-close" onClick={() => setSelectedMedia(null)} aria-label="Tutup dokumentasi" data-testid="button-close-media"><X size={19} /></button><img src={selectedMedia.src} alt={`Dokumentasi ${selectedMedia.title} TJKT`} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = selectedMedia.fallback; }} /><div className="media-lightbox-caption"><span className="mono">DOKUMENTASI TJKT</span><h2 id="media-lightbox-title">{selectedMedia.title}</h2><p>{selectedMedia.note}</p></div></div></div>}
+      {selectedMedia && <div className="media-lightbox" role="dialog" aria-modal="true" aria-labelledby="media-lightbox-title" onClick={() => setSelectedMedia(null)}><div className="media-lightbox-card" onClick={(event) => event.stopPropagation()}><button ref={mediaCloseRef} type="button" className="media-lightbox-close" onClick={() => setSelectedMedia(null)} aria-label="Tutup dokumentasi" data-testid="button-close-media"><X size={19} /></button><img src={selectedMedia.src} alt={`Dokumentasi ${selectedMedia.title} TJKT`} onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = selectedMedia.fallback; }} /><div className="media-lightbox-caption"><span className="mono">DOKUMENTASI TJKT</span><h2 id="media-lightbox-title">{selectedMedia.title}</h2><p>{selectedMedia.note}</p></div></div></div>}
    </>;
 }
 
