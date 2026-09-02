@@ -42,6 +42,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.matchMedia('(max-width: 980px)').matches;
     const root = document.documentElement;
+    const header = document.querySelector<HTMLElement>('.site-header');
     let lenis: Lenis | null = null;
     let refreshFrame = 0;
     let setMarqueeSkew: (value: number) => void = () => undefined;
@@ -73,7 +74,6 @@ export function MotionRoot({ children }: { children: ReactNode }) {
       }));
       setMarqueeSkew = (value) => updateSkew.forEach((update) => update(value));
       ScrollTrigger.create({ trigger: document.documentElement, start: 0, end: 'max', onUpdate: updateMarqueeDirection });
-      const header = document.querySelector<HTMLElement>('.site-header');
       if (header && !reduceMotion) {
         ScrollTrigger.create({
           trigger: document.documentElement,
@@ -141,7 +141,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         } else if (isMobile) {
           const pageHeroElements = Array.from(pageHero.querySelectorAll<HTMLElement>('.eyebrow, h1, .page-hero-side'));
           if (pageHeroElements.length) {
-            gsap.fromTo(pageHeroElements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: pageHero, start: 'top 88%', toggleActions: 'play none none reverse' } });
+            gsap.fromTo(pageHeroElements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: pageHero, start: 'top 88%', toggleActions: 'play none none none' } });
           }
         } else {
           gsap.timeline({
@@ -168,13 +168,13 @@ export function MotionRoot({ children }: { children: ReactNode }) {
               start: 'top 92%',
               end: 'top 63%',
               scrub: isMobile ? false : 0.8,
-              toggleActions: isMobile ? 'play none none reverse' : undefined,
+              toggleActions: isMobile ? 'play none none none' : undefined,
               invalidateOnRefresh: true,
             },
           });
         }
       });
-      if (!reduceMotion) {
+      if (!reduceMotion && !isMobile) {
         gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((element) => {
           gsap.to(element, { yPercent: -9, xPercent: 1.5, scale: 1.06, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'bottom top', scrub: 1.15, invalidateOnRefresh: true } });
         });
@@ -208,7 +208,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
           if (play) gsap.to(play, { yPercent: -22, rotation: 18, scale: 1.08, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: 1.1, invalidateOnRefresh: true } });
         });
         gsap.utils.toArray<HTMLElement>('.site-footer').forEach((footer) => {
-          gsap.fromTo(footer.querySelectorAll<HTMLElement>('.footer-brand, .footer-heading, .footer-links, .footer-bottom'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: footer, start: 'top 88%', toggleActions: 'play none none reverse' } });
+          gsap.fromTo(footer.querySelectorAll<HTMLElement>('.footer-brand, .footer-heading, .footer-links, .footer-bottom'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: footer, start: 'top 88%', toggleActions: 'play none none none' } });
         });
         const story = document.querySelector<HTMLElement>('.story-section');
         if (story) {
@@ -279,6 +279,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         lenis.destroy();
         gsap.ticker.remove(onTick);
       }
+      header?.classList.remove('header-hidden');
       setMarqueeSkew = () => undefined;
       images.forEach((image) => image.removeEventListener('load', refresh));
       window.removeEventListener('load', refresh);
