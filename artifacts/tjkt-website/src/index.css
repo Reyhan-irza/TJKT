@@ -513,7 +513,7 @@ button:disabled { cursor: not-allowed; }
   .hero-visual { justify-self:stretch; width:100%; } .hero-image-frame { box-shadow: 12px 12px 0 rgba(242,200,75,.82), var(--shadow-luxe); }
   .hero-note { align-self:auto; }
   .intro-grid, .asymmetry, .practice-grid, .video-layout, .contact-layout { grid-template-columns:1fr; gap:45px; }
-  .story-layout { grid-template-columns: 1fr; gap: 18px; padding: 78px 0; }
+   .story-layout { grid-template-columns: 1fr; gap: 18px; padding: 78px 0; min-height: auto; align-items: start; }
   .story-section { min-height: auto; }
   .story-copy { max-width: 600px; }
   .story-stage { height: 520px; min-height: 0; }
