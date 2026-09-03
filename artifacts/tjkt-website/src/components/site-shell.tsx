@@ -197,34 +197,84 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         }
       }
       const staggerGroups = [
-        ['.competency-grid', '.competency'],
-        ['.timeline', '.timeline-item'],
-        ['.lab-grid', '.lab-slot'],
-        ['.principles', '.principle'],
-        ['.career-list', '.career-item'],
-        ['.prospect-grid', '.prospect-card'],
-        ['.ecosystem-rail', '.ecosystem-group'],
+        { containerSelector: '.competency-grid', childSelector: '.competency', desktop: { x: 0, y: 28, scale: .96, rotate: -1 }, mobile: { y: 18, scale: .985 } },
+        { containerSelector: '.timeline', childSelector: '.timeline-item', desktop: { x: 42, y: 0, scale: .98, rotate: 0 }, mobile: { y: 20, scale: .985 } },
+        { containerSelector: '.lab-grid', childSelector: '.lab-slot', desktop: { x: 0, y: 34, scale: .93, rotate: -.7 }, mobile: { y: 18, scale: .98 } },
+        { containerSelector: '.principles', childSelector: '.principle', desktop: { x: -26, y: 0, scale: 1, rotate: 0 }, mobile: { y: 18, scale: .99 } },
+        { containerSelector: '.career-list', childSelector: '.career-item', desktop: { x: 28, y: 0, scale: .99, rotate: 0 }, mobile: { y: 18, scale: .985 } },
+        { containerSelector: '.prospect-grid', childSelector: '.prospect-card', desktop: { x: 0, y: 38, scale: .94, rotate: .6 }, mobile: { y: 18, scale: .98 } },
+        { containerSelector: '.ecosystem-rail', childSelector: '.ecosystem-group', desktop: { x: -24, y: 18, scale: .98, rotate: 0 }, mobile: { y: 18, scale: .985 } },
       ] as const;
       const staggerChildren = new Set<HTMLElement>();
-      staggerGroups.forEach(([containerSelector, childSelector]) => {
+      staggerGroups.forEach(({ containerSelector, childSelector, desktop, mobile }) => {
         document.querySelectorAll<HTMLElement>(containerSelector).forEach((container) => {
           const children = Array.from(container.querySelectorAll<HTMLElement>(childSelector));
           if (!children.length) return;
           children.forEach((child) => staggerChildren.add(child));
+          if (reduceMotion) {
+            gsap.set(children, { opacity: 1, x: 0, y: 0, scale: 1, rotate: 0, clearProps: 'clipPath,transform' });
+            return;
+          }
+          const from = isMobile
+            ? { opacity: 0, x: 0, y: mobile.y, scale: mobile.scale, rotate: 0, clipPath: 'inset(0)' }
+            : { opacity: 0, x: desktop.x, y: desktop.y, scale: desktop.scale, rotate: desktop.rotate, clipPath: 'inset(0 0 100% 0)' };
           gsap.fromTo(children,
-            { opacity: 0, x: isMobile ? 0 : -18, y: isMobile ? 18 : 28, rotate: isMobile ? 0 : -0.8, clipPath: isMobile ? 'inset(0)' : 'inset(0 0 100% 0)' },
+            from,
             {
-              opacity: 1, x: 0, y: 0, rotate: 0, clipPath: 'inset(0)', duration: .9,
-              stagger: isMobile ? .055 : .11, ease: 'power3.out',
+              opacity: 1, x: 0, y: 0, scale: 1, rotate: 0, clipPath: 'inset(0)', duration: isMobile ? .72 : .9,
+              stagger: isMobile ? .06 : .11, ease: 'power3.out',
               scrollTrigger: {
                 trigger: container,
-                start: 'top 91%',
-                end: 'top 55%',
-                scrub: isMobile ? .28 : .7,
+                start: 'top 92%',
+                end: isMobile ? 'top 67%' : 'top 55%',
+                scrub: isMobile ? .3 : .7,
                 invalidateOnRefresh: true,
               },
             },
           );
+        });
+      });
+      const signatureMotions = [
+        { selector: '.statement-layout', variant: 'slide-left' },
+        { selector: '.about-split', variant: 'split' },
+        { selector: '.dark-intro', variant: 'slide-right' },
+        { selector: '.learning-layout', variant: 'line-reveal' },
+        { selector: '.facility-hero-copy', variant: 'slide-left' },
+        { selector: '.gallery-heading', variant: 'split' },
+        { selector: '.career-intro', variant: 'slide-right' },
+        { selector: '.contact-layout', variant: 'line-reveal' },
+        { selector: '.ecosystem-heading', variant: 'slide-left' },
+      ] as const;
+      signatureMotions.forEach(({ selector, variant }) => {
+        document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+          if (reduceMotion) {
+            gsap.set(element, { opacity: 1, x: 0, y: 0, scale: 1, clearProps: 'clipPath,transform' });
+            return;
+          }
+          const from = isMobile
+            ? variant === 'slide-right'
+              ? { opacity: 0, x: 0, y: 24, scale: .985, clipPath: 'inset(0 0 0 8%)' }
+              : variant === 'line-reveal'
+                ? { opacity: 0, x: 0, y: 18, scale: .99, clipPath: 'inset(0 0 100% 0)' }
+                : { opacity: 0, x: 0, y: 20, scale: .985, clipPath: 'inset(0)' }
+            : variant === 'slide-right'
+              ? { opacity: 0, x: 34, y: 0, scale: .99, clipPath: 'inset(0 0 0 16%)' }
+              : variant === 'line-reveal'
+                ? { opacity: 0, x: 0, y: 28, scale: 1, clipPath: 'inset(0 0 100% 0)' }
+                : variant === 'split'
+                  ? { opacity: 0, x: -28, y: 18, scale: .985, clipPath: 'inset(0 8% 0 0)' }
+                  : { opacity: 0, x: -32, y: 0, scale: .99, clipPath: 'inset(0 100% 0 0)' };
+          gsap.fromTo(element, from, {
+            opacity: 1, x: 0, y: 0, scale: 1, clipPath: 'inset(0)', duration: isMobile ? .82 : 1.05,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 91%',
+              end: isMobile ? 'top 66%' : 'top 58%',
+              scrub: isMobile ? .28 : .72,
+              invalidateOnRefresh: true,
+            },
+          });
         });
       });
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element, index) => {
