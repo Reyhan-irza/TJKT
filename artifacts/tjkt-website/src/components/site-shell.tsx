@@ -52,6 +52,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
     const marqueeSpeed = { value: 1 };
     let marqueeDirection = 1;
     const marqueeAnimations: gsap.core.Tween[] = [];
+    let velocityReset: gsap.core.Tween | null = null;
     const onTick = (time: number) => {
       lenis?.raf(time * 1000);
       marqueeAnimations.forEach((animation) => animation.timeScale(marqueeDirection * marqueeSpeed.value));
@@ -124,6 +125,16 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         end: 'max',
         onUpdate: (self) => {
           root.style.setProperty('--scroll-progress', String(self.progress));
+           const velocity = Math.max(-2.2, Math.min(2.2, self.getVelocity() / 520));
+           root.style.setProperty('--scroll-velocity', velocity.toFixed(3));
+           setMarqueeSkew(velocity);
+           setMarqueeSpeed(1 + Math.min(1.35, Math.abs(velocity) * .45));
+           velocityReset?.kill();
+           velocityReset = gsap.delayedCall(.16, () => {
+             setMarqueeSkew(0);
+             setMarqueeSpeed(1);
+             root.style.setProperty('--scroll-velocity', '0');
+           });
         },
       });
       const routePage = document.querySelector<HTMLElement>('.page-transition');
@@ -176,6 +187,30 @@ export function MotionRoot({ children }: { children: ReactNode }) {
             ease: 'none',
             scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 1, invalidateOnRefresh: true },
           });
+        } else {
+          gsap.timeline({
+            scrollTrigger: {
+              trigger: hero,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: .42,
+              invalidateOnRefresh: true,
+            },
+          })
+            .to(hero.querySelector<HTMLElement>('.hero-copy'), { yPercent: -8, opacity: .72, ease: 'none' }, 0)
+            .to(hero.querySelector<HTMLElement>('.hero-visual'), { yPercent: 9, opacity: .78, ease: 'none' }, 0)
+            .to(hero.querySelector<HTMLElement>('.scroll-cue'), { y: 12, opacity: 0, ease: 'none' }, 0);
+          gsap.to(hero, {
+            backgroundPosition: '50% 70%',
+            ease: 'none',
+            scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .55, invalidateOnRefresh: true },
+          });
+          gsap.to(hero.querySelector<HTMLElement>('.hero-lines'), {
+            xPercent: -8,
+            opacity: .48,
+            ease: 'none',
+            scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: .5, invalidateOnRefresh: true },
+          });
         }
       }
       const pageHero = document.querySelector<HTMLElement>('.page-hero');
@@ -185,7 +220,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         } else if (isMobile) {
           const pageHeroElements = Array.from(pageHero.querySelectorAll<HTMLElement>('.eyebrow, h1, .page-hero-side'));
           if (pageHeroElements.length) {
-            gsap.fromTo(pageHeroElements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: pageHero, start: 'top 88%', toggleActions: 'play reverse play reverse' } });
+            gsap.fromTo(pageHeroElements, { opacity: 0, y: 24 }, { opacity: 1, y: -8, duration: 0.9, stagger: 0.07, ease: 'none', scrollTrigger: { trigger: pageHero, start: 'top 94%', end: 'bottom 46%', scrub: .38, invalidateOnRefresh: true } });
           }
         } else {
           gsap.timeline({
@@ -277,29 +312,78 @@ export function MotionRoot({ children }: { children: ReactNode }) {
           });
         });
       });
-      const flowTargets = [
-        { selector: '.statement-arrow', y: -18, rotate: -12 },
-        { selector: '.story-stage', y: -24, rotate: 0 },
-        { selector: '.number-grid', y: -16, rotate: 0 },
-        { selector: '.contact-row', y: -12, rotate: 0 },
-        { selector: '.footer-top', y: -15, rotate: 0 },
-      ] as const;
-      flowTargets.forEach(({ selector, y, rotate }) => {
-        document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
-          gsap.to(element, {
-            y: isMobile ? y * .45 : y,
-            rotation: isMobile ? 0 : rotate,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: element,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: isMobile ? .34 : 1.05,
-              invalidateOnRefresh: true,
-            },
+      if (!reduceMotion) {
+        const flowTargets = [
+          { selector: '.statement-arrow', y: -30, rotate: -16 },
+          { selector: '.story-stage', y: -38, rotate: 0 },
+          { selector: '.number-grid', y: -24, rotate: 0 },
+          { selector: '.contact-row', y: -18, rotate: 0 },
+          { selector: '.footer-top', y: -24, rotate: 0 },
+        ] as const;
+        flowTargets.forEach(({ selector, y, rotate }) => {
+          document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+            gsap.to(element, {
+              y: isMobile ? y * .7 : y,
+              rotation: isMobile ? 0 : rotate,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: isMobile ? .42 : 1.05,
+                invalidateOnRefresh: true,
+              },
+            });
+            gsap.set(element, { willChange: 'transform' });
           });
         });
-      });
+        const depthScenes = [
+          { trigger: '.statement-strip', target: '.statement-layout p', x: -34, y: 26, rotate: -1.5 },
+          { trigger: '.competency-band', target: '.competency-number', x: -20, y: 22, rotate: -5 },
+          { trigger: '.number-band', target: '.number', x: 0, y: 34, rotate: 2 },
+          { trigger: '.practice-section', target: '.practice-row-copy', x: 28, y: 22, rotate: 0 },
+          { trigger: '.video-section', target: '.video-layout h2', x: -26, y: 24, rotate: -1 },
+          { trigger: '.dark-intro', target: 'h2', x: -24, y: 26, rotate: -1 },
+          { trigger: '.learning-layout', target: '.learning-sticky h2', x: -20, y: 22, rotate: 0 },
+          { trigger: '.facility-hero-copy', target: 'h2', x: -24, y: 24, rotate: -1 },
+          { trigger: '.gallery-heading', target: 'h2', x: -20, y: 22, rotate: 0 },
+          { trigger: '.career-list', target: '.career-item h3', x: 22, y: 18, rotate: 0 },
+          { trigger: '.lab-grid', target: '.lab-meta', x: -16, y: 15, rotate: -2 },
+          { trigger: '.lab-grid', target: '.lab-title', x: 18, y: 20, rotate: 0 },
+          { trigger: '.ecosystem-section', target: '.ecosystem-group-label', x: -22, y: 17, rotate: 0 },
+          { trigger: '.contact-list', target: '.contact-value', x: 24, y: 14, rotate: 0 },
+          { trigger: '.contact-layout', target: '.contact-form-heading', x: 18, y: 20, rotate: 0 },
+          { trigger: '.footer-top', target: '.footer-intro', x: 0, y: 24, rotate: 0 },
+          { trigger: '.page-hero', target: '.page-hero-coordinate', x: 0, y: 22, rotate: 3 },
+          { trigger: '.blueprint', target: '.blueprint-coord', x: 0, y: 18, rotate: 0 },
+        ] as const;
+        depthScenes.forEach(({ trigger, target, x, y, rotate }) => {
+          document.querySelectorAll<HTMLElement>(trigger).forEach((scene) => {
+            const targets = Array.from(scene.querySelectorAll<HTMLElement>(target));
+            if (!targets.length) return;
+            const factor = isMobile ? .68 : 1;
+            gsap.set(targets, { willChange: 'transform, opacity' });
+            gsap.fromTo(targets,
+              { opacity: .28, x: x * factor, y: y * factor, rotation: rotate * factor, scale: isMobile ? .98 : .96 },
+              {
+                opacity: 1,
+                x: x * -.3 * factor,
+                y: y * -.42 * factor,
+                rotation: rotate * -.35 * factor,
+                scale: 1,
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: scene,
+                  start: 'top bottom',
+                  end: 'bottom 12%',
+                  scrub: isMobile ? .42 : .95,
+                  invalidateOnRefresh: true,
+                },
+              },
+            );
+          });
+        });
+      }
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element, index) => {
         if (element.closest('.hero') || staggerChildren.has(element)) return;
         if (reduceMotion) gsap.set(element, { opacity: 1, clipPath: 'none', clearProps: 'transform' });
@@ -322,19 +406,19 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         }
       });
       if (!reduceMotion) {
-        const parallaxScrub = isMobile ? 0.32 : 1.15;
-        const parallaxY = isMobile ? -4 : -9;
-        const parallaxScale = isMobile ? 1.025 : 1.06;
+         const parallaxScrub = isMobile ? 0.42 : 1.15;
+         const parallaxY = isMobile ? -9 : -16;
+         const parallaxScale = isMobile ? 1.045 : 1.09;
         gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((element) => {
-          gsap.to(element, { yPercent: parallaxY, xPercent: isMobile ? .6 : 1.5, scale: parallaxScale, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'bottom top', scrub: parallaxScrub, invalidateOnRefresh: true } });
+           gsap.to(element, { yPercent: parallaxY, xPercent: isMobile ? 1.4 : 2.8, scale: parallaxScale, ease: 'none', scrollTrigger: { trigger: element, start: 'top bottom', end: 'bottom top', scrub: parallaxScrub, invalidateOnRefresh: true } });
         });
         gsap.utils.toArray<HTMLElement>('.slot-image').forEach((image) => {
-          gsap.fromTo(image, { scale: isMobile ? 1.09 : 1.14, yPercent: isMobile ? -2 : -4 }, { scale: 1, yPercent: isMobile ? 2 : 4, ease: 'none', scrollTrigger: { trigger: image.closest('.lab-slot') ?? image, start: 'top bottom', end: 'bottom top', scrub: isMobile ? .32 : 1.2, invalidateOnRefresh: true } });
+           gsap.fromTo(image, { scale: isMobile ? 1.14 : 1.19, yPercent: isMobile ? -4 : -7 }, { scale: 1.02, yPercent: isMobile ? 5 : 8, ease: 'none', scrollTrigger: { trigger: image.closest('.lab-slot') ?? image, start: 'top bottom', end: 'bottom top', scrub: isMobile ? .42 : 1.2, invalidateOnRefresh: true } });
         });
         gsap.utils.toArray<HTMLElement>('.blueprint').forEach((blueprint) => {
           const mark = blueprint.querySelector<HTMLElement>('.blueprint-mark');
           if (mark) gsap.to(mark, { rotation: isMobile ? 180 : 360, scale: isMobile ? 1.04 : 1.08, ease: 'none', scrollTrigger: { trigger: blueprint, start: 'top 95%', end: 'bottom 10%', scrub: isMobile ? .32 : 1.1, invalidateOnRefresh: true } });
-          gsap.to(blueprint, { yPercent: isMobile ? -2 : -3, ease: 'none', scrollTrigger: { trigger: blueprint, start: 'top bottom', end: 'bottom top', scrub: isMobile ? .32 : 1, invalidateOnRefresh: true } });
+           gsap.to(blueprint, { yPercent: isMobile ? -4 : -6, ease: 'none', scrollTrigger: { trigger: blueprint, start: 'top bottom', end: 'bottom top', scrub: isMobile ? .42 : 1, invalidateOnRefresh: true } });
         });
         gsap.utils.toArray<HTMLElement>('.number').forEach((number) => {
           const target = Number(number.textContent?.trim());
@@ -437,6 +521,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
       context.revert();
       media.revert();
       marqueeAnimations.forEach((animation) => animation.kill());
+       velocityReset?.kill();
       document.querySelectorAll<HTMLElement>('.running-track.is-gsap').forEach((track) => track.classList.remove('is-gsap'));
       if (lenis) {
         lenis.off('scroll', onLenisScroll);
