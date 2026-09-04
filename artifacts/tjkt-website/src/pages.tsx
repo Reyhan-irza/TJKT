@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type R
 import { Link } from 'wouter';
 import { activities, careers, competencies, learningAreas, practiceAreas, site } from '@/data/site';
 import { media } from '@/data/media';
-import { ArrowLink, SectionLabel, Seo, VideoPreview } from '@/components/site-shell';
+import { ArrowLink, SectionLabel, Seo, TypingLoop, VideoPreview } from '@/components/site-shell';
 
 const baseDescription = 'Website informasi dan pengenalan Jurusan Teknik Jaringan Komputer dan Telekomunikasi SMKN 2 Lubuk Basung.';
 type MediaItem = { src: string; fallback: string; title: string; note: string; focus?: string };
@@ -15,8 +15,8 @@ export function HomePage() {
   return <><Seo title="TJKT SMKN 2 Lubuk Basung | Teknik Jaringan Komputer dan Telekomunikasi" description={baseDescription} />
     <section className="hero">
       <div className="hero-lines" />
-      <div className="container hero-grid">
-        <div className="hero-copy"><div className="hero-kicker"><SectionLabel dark>Program keahlian / TJKT</SectionLabel></div><h1><span className="hero-line-mask"><span className="hero-line">Menghubungkan</span></span><span className="hero-line-mask"><span className="hero-line"><em>teknologi,</em></span></span><span className="hero-line-mask"><span className="hero-line">menggerakkan</span></span><span className="hero-line-mask"><span className="hero-line">masa depan.</span></span></h1><p className="hero-sub">Tempat mengenal jaringan komputer, infrastruktur, dan telekomunikasi melalui cara berpikir teknis dan praktik yang nyata.</p><div className="hero-actions"><Link href="/pembelajaran" className="button-primary" data-testid="link-hero-explore">Jelajahi TJKT <ArrowRight size={15} /></Link><Link href="/tentang" className="button-secondary" data-testid="link-hero-about">Tentang TJKT</Link></div><div className="hero-data" aria-label="Ringkasan program"><div><strong>04</strong><span>fondasi bidang</span></div><div><strong>06</strong><span>ruang praktik</span></div><div><strong>01</strong><span>rasa ingin tahu</span></div></div></div>
+       <div className="container hero-grid">
+        <div className="hero-copy"><div className="hero-kicker"><SectionLabel dark>Program keahlian / TJKT</SectionLabel></div><h1><span className="hero-line-mask"><span className="hero-line">Menghubungkan</span></span><span className="hero-line-mask"><span className="hero-line"><em>teknologi,</em></span></span><span className="hero-line-mask"><span className="hero-line">menggerakkan</span></span><span className="hero-line-mask"><span className="hero-line">masa depan.</span></span></h1><p className="hero-sub">Tempat mengenal jaringan komputer, infrastruktur, dan telekomunikasi melalui cara berpikir teknis dan praktik yang nyata.</p><TypingLoop /><div className="hero-actions"><Link href="/pembelajaran" className="button-primary" data-testid="link-hero-explore">Jelajahi TJKT <ArrowRight size={15} /></Link><Link href="/tentang" className="button-secondary" data-testid="link-hero-about">Tentang TJKT</Link></div><div className="hero-data" aria-label="Ringkasan program"><div><strong>04</strong><span>fondasi bidang</span></div><div><strong>06</strong><span>ruang praktik</span></div><div><strong>01</strong><span>rasa ingin tahu</span></div></div></div>
           <div className="hero-visual">
            <figure className="hero-image-frame">
               <img src={media.heroIllustration} alt="Siswa TJKT sedang bekerja di menara jaringan SMKN 2 Lubuk Basung" width="1024" height="576" loading="eager" fetchPriority="high" decoding="async" data-parallax />

@@ -185,7 +185,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
         } else if (isMobile) {
           const pageHeroElements = Array.from(pageHero.querySelectorAll<HTMLElement>('.eyebrow, h1, .page-hero-side'));
           if (pageHeroElements.length) {
-            gsap.fromTo(pageHeroElements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: pageHero, start: 'top 88%', toggleActions: 'play none none none' } });
+            gsap.fromTo(pageHeroElements, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: pageHero, start: 'top 88%', toggleActions: 'play reverse play reverse' } });
           }
         } else {
           gsap.timeline({
@@ -277,6 +277,29 @@ export function MotionRoot({ children }: { children: ReactNode }) {
           });
         });
       });
+      const flowTargets = [
+        { selector: '.statement-arrow', y: -18, rotate: -12 },
+        { selector: '.story-stage', y: -24, rotate: 0 },
+        { selector: '.number-grid', y: -16, rotate: 0 },
+        { selector: '.contact-row', y: -12, rotate: 0 },
+        { selector: '.footer-top', y: -15, rotate: 0 },
+      ] as const;
+      flowTargets.forEach(({ selector, y, rotate }) => {
+        document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
+          gsap.to(element, {
+            y: isMobile ? y * .45 : y,
+            rotation: isMobile ? 0 : rotate,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: isMobile ? .34 : 1.05,
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+      });
       gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element, index) => {
         if (element.closest('.hero') || staggerChildren.has(element)) return;
         if (reduceMotion) gsap.set(element, { opacity: 1, clipPath: 'none', clearProps: 'transform' });
@@ -335,7 +358,7 @@ export function MotionRoot({ children }: { children: ReactNode }) {
           if (play) gsap.to(play, { yPercent: isMobile ? -10 : -22, rotation: isMobile ? 9 : 18, scale: isMobile ? 1.04 : 1.08, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: isMobile ? .32 : 1.1, invalidateOnRefresh: true } });
         });
         gsap.utils.toArray<HTMLElement>('.site-footer').forEach((footer) => {
-          gsap.fromTo(footer.querySelectorAll<HTMLElement>('.footer-brand, .footer-heading, .footer-links, .footer-bottom'), { opacity: 0, y: isMobile ? 14 : 24 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: footer, start: 'top 92%', end: 'top 65%', scrub: isMobile ? .28 : false, toggleActions: isMobile ? undefined : 'play none none none', invalidateOnRefresh: true } });
+           gsap.fromTo(footer.querySelectorAll<HTMLElement>('.footer-brand, .footer-heading, .footer-links, .footer-bottom'), { opacity: 0, y: isMobile ? 14 : 24 }, { opacity: 1, y: 0, duration: 0.85, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: footer, start: 'top 92%', end: 'top 65%', scrub: isMobile ? .28 : false, toggleActions: isMobile ? undefined : 'play reverse play reverse', invalidateOnRefresh: true } });
         });
         const story = document.querySelector<HTMLElement>('.story-section');
         if (story) {
@@ -577,6 +600,40 @@ export function Shell({ children }: { children: ReactNode }) {
 
 export function SectionLabel({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return <div className={`eyebrow ${dark ? 'dark-label' : ''}`}>{children}</div>;
+}
+
+export function TypingLoop() {
+  const textRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const phrases = ['membangun koneksi', 'membaca sistem', 'menguji solusi'];
+    const state = { chars: 0 };
+    const timeline = gsap.timeline({ repeat: -1, repeatDelay: .55 });
+    phrases.forEach((phrase) => {
+      timeline
+        .to(state, {
+          chars: phrase.length,
+          duration: Math.max(.7, phrase.length * .065),
+          ease: 'none',
+          onUpdate: () => {
+            if (textRef.current) textRef.current.textContent = phrase.slice(0, Math.round(state.chars));
+          },
+        })
+        .to({}, { duration: .72 })
+        .to(state, {
+          chars: 0,
+          duration: Math.max(.4, phrase.length * .035),
+          ease: 'power2.in',
+          onUpdate: () => {
+            if (textRef.current) textRef.current.textContent = phrase.slice(0, Math.round(state.chars));
+          },
+        });
+    });
+    return () => {
+      timeline.kill();
+    };
+  }, []);
+  return <div className="hero-typing" aria-hidden="true"><span className="hero-typing-prefix">/ </span><span ref={textRef}>membangun koneksi</span><span className="hero-typing-cursor" /></div>;
 }
 
 export function ArrowLink({ href, children, external = false }: { href: string; children: ReactNode; external?: boolean }) {
